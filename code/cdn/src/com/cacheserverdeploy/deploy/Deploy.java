@@ -13,6 +13,10 @@ public class Deploy
     public static String[] deployServer(String[] graphContent)
     {
         /**do your work here**/
+        for (int i = 0; i < graphContent.length; i++) {
+            System.out.println(graphContent[i]);
+        }
+
         return new String[]{"17","\r\n","0 8 0 20"};
     }
 
