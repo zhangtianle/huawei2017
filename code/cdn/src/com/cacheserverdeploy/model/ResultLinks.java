@@ -21,6 +21,6 @@ public class ResultLinks {
         for (int i : nodeIds) {
             result = result + i + " ";
         }
-        return result + conId + " " + bandwidth + "\n";
+        return result + conId + " " + bandwidth;
     }
 }

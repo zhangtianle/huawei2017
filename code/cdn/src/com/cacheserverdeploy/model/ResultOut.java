@@ -6,7 +6,7 @@ import java.util.List;
  * Created by kyle on 3/30/17.
  */
 public class ResultOut {
-    private String[] result = {"","",""};
+    private String[] result;
 
     private boolean finded;
     private int linkNum;
@@ -20,11 +20,12 @@ public class ResultOut {
     }
 
     public String[] getResult() {
+        int lsize = resultLinksList.size();
+        result = new String[lsize + 1];
         if (finded) {
-            result[0] = linkNum + "";
-//            result[1] = "\n";
-            for (ResultLinks l : resultLinksList) {
-                result[2] = result[2] + l.getLinks();
+            result[0] = linkNum + "\n";
+            for (int i = 0; i < lsize; i++) {
+                result[i + 1] = resultLinksList.get(i).getLinks();
             }
         } else {
             return null;
