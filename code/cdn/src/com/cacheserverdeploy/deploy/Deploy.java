@@ -27,16 +27,14 @@ public class Deploy {
         int rConNum = network.getConNum();
         List<ResultLinks> resultLinksList = new ArrayList<ResultLinks>();
 
-//        for (int i = 0; i <= rConNum; i++) {
-            List<ConNode> conNodeList = network.getConNodeList();
-            for (ConNode cnode : conNodeList) {
-                int linkedNodeId = cnode.getLinkedNodeId();
-                List<Integer> ids = new ArrayList<Integer>();
-                ids.add(linkedNodeId);
-                ResultLinks resultLinks = new ResultLinks(ids, linkedNodeId, cnode.getBandwidthRequire());
-                resultLinksList.add(resultLinks);
-            }
-//        }
+        List<ConNode> conNodeList = network.getConNodeList();
+        for (ConNode cnode : conNodeList) {
+            int linkedNodeId = cnode.getLinkedNodeId();
+            List<Integer> ids = new ArrayList<Integer>();
+            ids.add(linkedNodeId);
+            ResultLinks resultLinks = new ResultLinks(ids, linkedNodeId, cnode.getBandwidthRequire());
+            resultLinksList.add(resultLinks);
+        }
 
         ResultOut resultOut = new ResultOut(true, rConNum, resultLinksList);
 
