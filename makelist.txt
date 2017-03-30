@@ -3,5 +3,8 @@ com/filetool/util/FileUtil.java
 com/filetool/util/LogUtil.java
 com/cacheserverdeploy/deploy/Deploy.java
 com/cacheserverdeploy/model/Edge.java
-com/cacheserverdeploy/model/NetWork.java
+com/cacheserverdeploy/model/Network.java
 com/cacheserverdeploy/model/Node.java
+com/cacheserverdeploy/model/ResultLinks.java
+com/cacheserverdeploy/model/ResultOut.java
+com/cacheserverdeploy/util/Tools.java

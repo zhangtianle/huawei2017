@@ -6,28 +6,28 @@ import java.util.List;
  * Created by kyle on 3/30/17.
  */
 public class ResultOut {
-    private String result = "";
+    private String[] result = {"", "\r\n", ""};
 
     private boolean finded;
     private int linkNum;
 
-    private List<ResultLinks> linksList;
+    private List<ResultLinks> resultLinksList;
 
-    public ResultOut(String result, boolean finded, int linkNum, List<ResultLinks> linksList) {
-        this.result = result;
+    public ResultOut(boolean finded, int linkNum, List<ResultLinks> resultLinksList) {
         this.finded = finded;
         this.linkNum = linkNum;
-        this.linksList = linksList;
+        this.resultLinksList = resultLinksList;
     }
 
-    public String getResult() {
+    public String[] getResult() {
         if (finded) {
-            result = linkNum + "\n";
-            for (ResultLinks l : linksList) {
-                result = result + l.getLinks();
+            result[0] = linkNum + "";
+            result[1] = "\n";
+            for (ResultLinks l : resultLinksList) {
+                result[2] = result[2] + l.getLinks();
             }
         } else {
-            result = "NA";
+            return null;
         }
         return result;
     }

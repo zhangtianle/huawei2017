@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by kyle on 3/30/17.
  */
-public class NetWork {
+public class Network {
     private int nodeNum;
     private int edgeNum;
     private int conNum;
@@ -15,7 +15,7 @@ public class NetWork {
     private List<Edge> edgeList;
     private List<ConNode> conNodeList;
 
-    public NetWork(int nodeNum, int edgeNum, int conNum, int serverCost, List<Edge> edgeList, List<ConNode> conNodeList) {
+    public Network(int nodeNum, int edgeNum, int conNum, int serverCost, List<Edge> edgeList, List<ConNode> conNodeList) {
         this.nodeNum = nodeNum;
         this.edgeNum = edgeNum;
         this.conNum = conNum;
