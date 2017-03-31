@@ -21,11 +21,12 @@ public class ResultOut {
 
     public String[] getResult() {
         int lsize = resultLinksList.size();
-        result = new String[lsize + 1];
+        result = new String[lsize + 2];
         if (finded) {
-            result[0] = linkNum + "\n";
+            result[0] = String.valueOf(lsize);
+            result[1] = "";
             for (int i = 0; i < lsize; i++) {
-                result[i + 1] = resultLinksList.get(i).getLinks();
+                result[i + 2] = resultLinksList.get(i).getLinks();
             }
         } else {
             return null;

@@ -1,5 +1,6 @@
 package com.cacheserverdeploy.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,8 +21,36 @@ public class Network {
         this.edgeNum = edgeNum;
         this.conNum = conNum;
         this.serverCost = serverCost;
-        this.edgeList = edgeList;
+        this.edgeList = fullLink(edgeList);
         this.conNodeList = conNodeList;
+    }
+
+    private List<Edge> fullLink(List<Edge> list) {
+        List<Edge> r = new ArrayList<Edge>();
+        for (Edge e : list) {
+            r.add(e);
+            Edge edge = new Edge(e.getEndId(), e.getStartId(), e.getBandwidth(), e.getPerFee());
+            r.add(edge);
+        }
+        return r;
+    }
+
+    public List<Edge> getNeighborEdge(int nodeId) {
+        List<Edge> list = new ArrayList<Edge>();
+        for (Edge e : edgeList) {
+            int startId = e.getStartId();
+            if (startId == nodeId) {
+                list.add(e);
+            }
+        }
+        return list;
+    }
+
+    public int[] getNeighborNodeId(int nodeId) {
+        for (Edge e : edgeList) {
+
+        }
+        return null;
     }
 
     public int getNodeNum() {

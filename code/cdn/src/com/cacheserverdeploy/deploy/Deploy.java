@@ -1,10 +1,7 @@
 package com.cacheserverdeploy.deploy;
 
 
-import com.cacheserverdeploy.model.ConNode;
-import com.cacheserverdeploy.model.Network;
-import com.cacheserverdeploy.model.ResultLinks;
-import com.cacheserverdeploy.model.ResultOut;
+import com.cacheserverdeploy.model.*;
 import com.cacheserverdeploy.util.Tools;
 
 import java.util.ArrayList;
@@ -30,14 +27,16 @@ public class Deploy {
         List<ConNode> conNodeList = network.getConNodeList();
         for (ConNode cnode : conNodeList) {
             int linkedNodeId = cnode.getLinkedNodeId();
-            List<Integer> ids = new ArrayList<Integer>();
-            ids.add(linkedNodeId);
-            ResultLinks resultLinks = new ResultLinks(ids, linkedNodeId, cnode.getBandwidthRequire());
+            List<Edge> ids = new ArrayList<Edge>();
+            List<Edge> neighborEdge = network.getNeighborEdge(cnode.getLinkedNodeId());
+            Edge edge = neighborEdge.get(0);
+
+            ids.add(edge);
+            ResultLinks resultLinks = new ResultLinks(ids, cnode.getId(), cnode.getBandwidthRequire());
             resultLinksList.add(resultLinks);
         }
 
         ResultOut resultOut = new ResultOut(true, rConNum, resultLinksList);
-
 
         return resultOut.getResult();
     }
