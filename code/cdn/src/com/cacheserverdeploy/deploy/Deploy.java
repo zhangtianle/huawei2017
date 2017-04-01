@@ -1,11 +1,9 @@
 package com.cacheserverdeploy.deploy;
 
 
+import com.cacheserverdeploy.algorithm.NetFlow;
 import com.cacheserverdeploy.model.*;
 import com.cacheserverdeploy.util.Tools;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Deploy {
     /**
@@ -21,24 +19,11 @@ public class Deploy {
         Tools tools = new Tools();
         Network network = tools.getNetWorkFromArgs(graphContent);
 
-        int rConNum = network.getConNum();
-        List<ResultLinks> resultLinksList = new ArrayList<ResultLinks>();
+        NetFlow netFlow = new NetFlow();
+        boolean shortestPaths = netFlow.getShortestPaths(network.getNodeNum(), 3, network.getEdgeList());
 
-        List<ConNode> conNodeList = network.getConNodeList();
-        for (ConNode cnode : conNodeList) {
-            int linkedNodeId = cnode.getLinkedNodeId();
-            List<Edge> ids = new ArrayList<Edge>();
-            List<Edge> neighborEdge = network.getNeighborEdge(cnode.getLinkedNodeId());
-            Edge edge = neighborEdge.get(0);
 
-            ids.add(edge);
-            ResultLinks resultLinks = new ResultLinks(ids, cnode.getId(), cnode.getBandwidthRequire());
-            resultLinksList.add(resultLinks);
-        }
-
-        ResultOut resultOut = new ResultOut(true, rConNum, resultLinksList);
-
-        return resultOut.getResult();
+        return null;
     }
 
 }

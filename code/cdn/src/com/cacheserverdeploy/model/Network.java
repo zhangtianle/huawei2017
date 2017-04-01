@@ -46,11 +46,14 @@ public class Network {
         return list;
     }
 
-    public int[] getNeighborNodeId(int nodeId) {
-        for (Edge e : edgeList) {
-
+    public List<Integer> getNeighborNodeId(int nodeId) {
+        List<Edge> neighborEdge = getNeighborEdge(nodeId);
+        List<Integer> is = new ArrayList<Integer>();
+        for (Edge e : neighborEdge) {
+            int endId = e.getEndId();
+            is.add(endId);
         }
-        return null;
+        return is;
     }
 
     public int getNodeNum() {
