@@ -13,20 +13,25 @@ import java.util.List;
  */
 public class NetFlow {
 
-    private int[] result;
     private NetInfo netInfo;
     private int[] pre;
     private int[] dist;
+    boolean[] visited;
 
-    public boolean SPFA(int s, int t, int n) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        int N = netInfo.getN();
-        Edge[] e = netInfo.getEdges();
-        int[] head = netInfo.getHead();
+    public NetFlow(NetInfo netInfo) {
+        this.netInfo = netInfo;
+        int N = netInfo.getSuperNodeNum();
         pre = new int[N];
         dist = new int[N];
-        boolean[] visited = new boolean[N];
+    }
 
+    private boolean SPFA(int s, int t, int n) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+        Edge[] e = netInfo.getEdges();
+        int[] head = netInfo.getHead();
+
+//        boolean[] visited = new boolean[N];
 
         for (int i = 0; i < n; i++) {
             pre[i] = -1;
@@ -104,25 +109,30 @@ public class NetFlow {
         return out;
     }
 
-    public Evaluate calC(int[] gene) {
+    public Evaluate calC(boolean[] gene) {
 
-        int N = netInfo.getN();
-        int NN = netInfo.getNN();
+        NetInfo.en = 0;
+
+        int N = netInfo.getSuperNodeNum();
+        int NN = netInfo.getNodeNum();
         List<Integer> T_cost = netInfo.getT_cost();
         List<Integer> T_list = netInfo.getT_list();
 
+        pre = new int[N];
+        dist = new int[N];
+        visited = new boolean[N];
+
         //添加超级原点,汇点
-        int S = NN + 2;   //超级原点
-        int T = NN + 1;  //超级汇点
+        int S = NN + 1;   //超级原点
+        int T = NN + 0;  //超级汇点
         for (int i = 0; i < T_list.size(); i++) netInfo.addedge(T_list.get(i), T, T_cost.get(i), 0); //添加消费节点到超级汇点
         ArrayList<Integer> inNode = new ArrayList<Integer>();   //服务器个数
         for (int i = 0; i < gene.length; i++) {
-            if (gene[i] == 1) {
-                netInfo.addedge(S, gene[i], Integer.MAX_VALUE, 0);
+            if (gene[i] == true) {
+                netInfo.addedge(S, i, Integer.MAX_VALUE, 0);
             }
         }
         Evaluate output = MCMF(S, T, N);
         return output;
     }
-
 }

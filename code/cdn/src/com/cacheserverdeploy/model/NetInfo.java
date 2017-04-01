@@ -8,23 +8,24 @@ import java.util.List;
 public class NetInfo {
 
     private List<Evaluate> baga;
-    private int edgeCount;   //边的个数
-    private int NN;
-    private int N;  //节点加上超级原点，汇点。
-    private int S;  //超级原点
-    private int T;  //超级汇点
+    private int edgeNum;   //边的个数
+    private int nodeNum; //节点个数
+    private int superNodeNum;  //节点加上超级原点，汇点。
+    private int superS;  //超级原点
+    private int superT;  //超级汇点
     private int[] bandwidth;
     private int cost_server;
     private Edge[] edges;
-    private int en = 0;
-    private int sumFlow = 0;
+    public static int en = 0;
     private int[] head;
 
     private List<Integer> T_list;
     private List<Integer> T_cost;
 
     private void add(int x, int y, int f, int c) {
-        if (edges[en] == null) edges[en] = new Edge();
+        if (edges[en] == null) {
+            edges[en] = new Edge();
+        }
         edges[en].setFrom(x);
         edges[en].setTo(y);
         edges[en].setCap(f);
@@ -46,44 +47,44 @@ public class NetInfo {
         this.baga = baga;
     }
 
-    public int getEdgeCount() {
-        return edgeCount;
+    public int getEdgeNum() {
+        return edgeNum;
     }
 
-    public void setEdgeCount(int edgeCount) {
-        this.edgeCount = edgeCount;
+    public void setEdgeNum(int edgeNum) {
+        this.edgeNum = edgeNum;
     }
 
-    public int getNN() {
-        return NN;
+    public int getNodeNum() {
+        return nodeNum;
     }
 
-    public void setNN(int NN) {
-        this.NN = NN;
+    public void setNodeNum(int nodeNum) {
+        this.nodeNum = nodeNum;
     }
 
-    public int getN() {
-        return N;
+    public int getSuperNodeNum() {
+        return superNodeNum;
     }
 
-    public void setN(int n) {
-        N = n;
+    public void setSuperNodeNum(int superNodeNum) {
+        this.superNodeNum = superNodeNum;
     }
 
-    public int getS() {
-        return S;
+    public int getSuperS() {
+        return superS;
     }
 
-    public void setS(int s) {
-        S = s;
+    public void setSuperS(int superS) {
+        this.superS = superS;
     }
 
-    public int getT() {
-        return T;
+    public int getSuperT() {
+        return superT;
     }
 
-    public void setT(int t) {
-        T = t;
+    public void setSuperT(int superT) {
+        this.superT = superT;
     }
 
     public int[] getBandwidth() {
@@ -116,14 +117,6 @@ public class NetInfo {
 
     public void setEn(int en) {
         this.en = en;
-    }
-
-    public int getSumFlow() {
-        return sumFlow;
-    }
-
-    public void setSumFlow(int sumFlow) {
-        this.sumFlow = sumFlow;
     }
 
     public int[] getHead() {

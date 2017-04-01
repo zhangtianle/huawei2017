@@ -1,5 +1,6 @@
 package com.cacheserverdeploy.tool;
 
+import com.cacheserverdeploy.model.Edge;
 import com.cacheserverdeploy.model.NetInfo;
 
 import java.util.ArrayList;
@@ -23,9 +24,20 @@ public class Tool {
         int num_T = Integer.valueOf(arr1[2]); //消费节点的个数
         int cost_server = Integer.valueOf(graphContent[2]);
 
-        netInfo.setEdgeCount(E);
-        netInfo.setNN(NN);
+        int N = NN + 2;
+        netInfo.setEdgeNum(E * 5);
+        netInfo.setNodeNum(NN);
+        netInfo.setSuperNodeNum(N);
+
         netInfo.setCost_server(cost_server);
+        // TODO
+        netInfo.setEdges(new Edge[netInfo.getEdgeNum()]);
+        int[] head = new int[10000];
+        for (int i = 0; i < 10000; i++) {
+            head[i] = -1;
+        }
+        netInfo.setHead(head);
+
 
         int[] bandwidth = new int[NN];
 
