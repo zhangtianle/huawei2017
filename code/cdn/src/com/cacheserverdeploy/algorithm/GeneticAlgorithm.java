@@ -100,18 +100,18 @@ public class GeneticAlgorithm {
             resPopulation.remove(p2);
             /////选择机制
 
-            if (r1.error <= 0 && r2.error > 0) {
+            if (r1.getError() <= 0 && r2.getError() > 0) {
                 population.add(c1);
-            } else if (r1.error > 0 && r2.error <= 0) {
+            } else if (r1.getError() > 0 && r2.getError() <= 0) {
                 population.add(c2);
-            } else if (r1.error <= 0 && r2.error <= 0) {
-                if (r1.cost <= r2.cost) {
+            } else if (r1.getError() <= 0 && r2.getError() <= 0) {
+                if (r1.getCost() <= r2.getCost()) {
                     population.add(c1);
                 } else {
                     population.add(c2);
                 }
-            } else if (r1.error > 0 && r2.error > 0) {
-                if (r1.error <= r2.error) {
+            } else if (r1.getError() > 0 && r2.getError() > 0) {
+                if (r1.getError() <= r2.getError()) {
                     population.add(r1);
                 } else {
                     population.add(r2);
