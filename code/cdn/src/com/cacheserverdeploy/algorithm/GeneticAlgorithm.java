@@ -12,9 +12,7 @@ public class GeneticAlgorithm {
     private int maxIter = 100;
     private double pm = 0.05;
     private double pc = 0.8;
-    private int[] bandwidth;    //消费节带宽需求
     private int consumptionNum; // 消费节点个数
-    private int generation = 1;//当前遗传到第几代
     private Evaluate bestScore; //最好的情况
 
     public GeneticAlgorithm(int popSize, int geneSize, int maxIter,
@@ -25,23 +23,24 @@ public class GeneticAlgorithm {
         this.maxIter = maxIter;
         this.pm = pm;
         this.pc = pc;
-        this.bandwidth = bandwidth;
         this.consumptionNum = bandwidth.length;
         this.bestScore.setError(0.0f);
         this.bestScore.setCost(100000);
     }
 
-    public void calculate() {
-        generation = 1;
-        init(bandwidth);
+    public Evaluate calculate() {
+        int generation = 1;
+        init();
         while (generation <= maxIter) {
             evolve();
             generation++;
         }
+        // TODO
+        return bestScore;
     }
 
-    private void init(int[] bandwidth) {
-        int[] Roulette = new int[bandwidth.length];
+    private void init() {
+        /*int[] Roulette = new int[bandwidth.length];
         //轮盘赌进行初始化
         int sum_roulette = 0;
         for (int i = 0; i < geneSize; i++) {
@@ -52,13 +51,13 @@ public class GeneticAlgorithm {
         for (int i = 0; i < popSize; i++) {
             Chromosome chro = new Chromosome(geneSize, consumptionNum, Roulette);
             population.add(chro);
-        }
+        }*/
     }
 
     private void evolve() {
 //		ArrayList<Chromosome> childPopulation = new ArrayList<Chromosome>();
-        ArrayList<Chromosome> pops = new ArrayList<Chromosome>();
-        ArrayList<Evaluate> resPopulation = new ArrayList<Evaluate>();
+        ArrayList<Chromosome> pops;
+        ArrayList<Evaluate> resPopulation;
         pops = clone(population);
         while (pops.size() > 0) {
             int p1 = (int) (Math.random() * pops.size() % pops.size());
@@ -68,7 +67,7 @@ public class GeneticAlgorithm {
             Chromosome c2 = pops.get(p2);
             pops.remove(p2);
             ///无放回的随机取样
-            ArrayList<Chromosome> children = Chromosome.genetic(c1, c2, pc);
+            ArrayList<Chromosome> children = c1.genetic(c1, c2, pc);
             if (children != null) {
                 for (Chromosome child : children) {
                     population.add(child);
@@ -112,9 +111,9 @@ public class GeneticAlgorithm {
                 }
             } else if (r1.getError() > 0 && r2.getError() > 0) {
                 if (r1.getError() <= r2.getError()) {
-                    population.add(r1);
+                    population.add(c1);
                 } else {
-                    population.add(r2);
+                    population.add(c2);
                 }
             }
 
@@ -129,10 +128,10 @@ public class GeneticAlgorithm {
 
     private ArrayList<Evaluate> calculateScore() {
         ArrayList<Evaluate> output = new ArrayList<Evaluate>();
-        for (Chromosome chro : population) {
+/*        for (Chromosome chro : population) {
             Evaluate sc = calC(chro);
             output.add(sc);
-        }
+        }*/
         return output;
     }
 

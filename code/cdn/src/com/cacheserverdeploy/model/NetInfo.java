@@ -14,9 +14,10 @@ public class NetInfo {
     private int superS;  //超级原点
     private int superT;  //超级汇点
     private int[] bandwidth;
+    private int serverNum;
     private int cost_server;
     private Edge[] edges;
-    public static int en = 0;
+    private int en = 0;
     private int[] head;
 
     private List<Integer> T_list;
@@ -141,5 +142,13 @@ public class NetInfo {
 
     public void setT_cost(List<Integer> t_cost) {
         T_cost = t_cost;
+    }
+
+    public int getServerNum() {
+        return serverNum;
+    }
+
+    public void setServerNum(int serverNum) {
+        this.serverNum = serverNum;
     }
 }

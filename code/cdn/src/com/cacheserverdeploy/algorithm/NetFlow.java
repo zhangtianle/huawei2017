@@ -69,6 +69,7 @@ public class NetFlow {
         List<Integer> T_cost = netInfo.getT_cost();
         List<Integer> T_list = netInfo.getT_list();
 
+        int flow = 0;
         int mincost = 0;  //最小费用
         float error;
         int[] output = new int[T_cost.size()]; //初始化为0,每个消费节点获得的流量总数
@@ -81,37 +82,41 @@ public class NetFlow {
                 minflow = Math.min(minflow, e[i].getCap());
                 path.add(k1);
             }
+            flow += minflow;
             for (int i = pre[t], k1 = e[i].getFrom(); i != -1; k1 = e[i].getFrom(), i = pre[k1]) {
                 e[i].setCap(e[i].getCap() - minflow);   //当前边减去最小流量
                 e[i ^ 1].setCap(e[i ^ 1].getCap() + minflow);   //反向边加上最小流量
             }
             if (minflow != Integer.MAX_VALUE) {
-                for (int i = path.size() - 1; i > 0; i--) {
+                for (int i = 1; i < path.size(); i++) {
                     string.add(path.get(i) + "");
-                    string.add(" ");
                 }
-                mincost += dist[t] * minflow;
+                String ss = string.get(string.size() - 1);
+                int index = T_list.indexOf(Integer.parseInt(ss));
+                string.add(index + "");
                 string.add(minflow + "");
                 string.add("\r\n");
-                if (T_list.contains(path.get(0))) {
-                    int index = T_list.indexOf(path.get(0));
-                    output[index] += minflow;
-                }
+            }
+            mincost += dist[t] * minflow;
+            if (T_list.contains(path.get(0))) {
+                int index = T_list.indexOf(path.get(0));
+                output[index] += minflow;
+
             }
         }
         int sum_error = 0;
         for (int i = 0; i < T_cost.size(); i++) sum_error += T_cost.get(i) - output[i];
         error = sum_error / T_cost.size();
         Evaluate out = new Evaluate();
-        out.setCost(mincost);
+        System.out.println(mincost);
+
+        out.setCost(mincost + netInfo.getServerNum() * netInfo.getCost_server());
         out.setError(error);
         out.setList(string);
         return out;
     }
 
     public Evaluate calC(boolean[] gene) {
-
-        NetInfo.en = 0;
 
         int N = netInfo.getSuperNodeNum();
         int NN = netInfo.getNodeNum();
@@ -123,15 +128,19 @@ public class NetFlow {
         visited = new boolean[N];
 
         //添加超级原点,汇点
-        int S = NN + 1;   //超级原点
-        int T = NN + 0;  //超级汇点
-        for (int i = 0; i < T_list.size(); i++) netInfo.addedge(T_list.get(i), T, T_cost.get(i), 0); //添加消费节点到超级汇点
+        int S = NN + 0;   //超级原点
+        int T = NN + 1;  //超级汇点
+        for (int i = 0; i < T_list.size(); i++) netInfo.addedge(S, T_list.get(i), T_cost.get(i), 0); //添加消费节点到超级汇点
+//        for (int i = 0; i < T_list.size(); i++) netInfo.addedge(T_list.get(i), T, T_cost.get(i), 0); //添加消费节点到超级汇点
         ArrayList<Integer> inNode = new ArrayList<Integer>();   //服务器个数
+        int serverNum = 0;
         for (int i = 0; i < gene.length; i++) {
             if (gene[i] == true) {
-                netInfo.addedge(S, i, Integer.MAX_VALUE, 0);
+                netInfo.addedge(i, T, Integer.MAX_VALUE, 0);
+                serverNum++;
             }
         }
+        netInfo.setServerNum(serverNum);
         Evaluate output = MCMF(S, T, N);
         return output;
     }

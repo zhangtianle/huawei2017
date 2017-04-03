@@ -1,6 +1,7 @@
 package com.cacheserverdeploy.deploy;
 
 
+import com.cacheserverdeploy.algorithm.GeneticAlgorithm;
 import com.cacheserverdeploy.algorithm.NetFlow;
 import com.cacheserverdeploy.model.NetInfo;
 import com.cacheserverdeploy.tool.Tool;
@@ -21,12 +22,20 @@ public class Deploy
         Tool tool = new Tool();
         NetInfo netInfo = tool.readData(graphContent);
         NetFlow netFlow = new NetFlow(netInfo);
+//
+//        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+//        geneticAlgorithm.calculate();
+
         boolean b[] = new boolean[netInfo.getNodeNum()];
-        b[2] = true;
-        b[4] = true;
-        b[5] = true;
-        b[9] = true;
+        b[6] = true;
+        b[7] = true;
+        b[13] = true;
+        b[17] = true;
+        b[35] = true;
+        b[41] = true;
+        b[48] = true;
         netFlow.calC(b);
+//        netFlow.calC(b);
 
         return new String[]{"17","\r\n","0 8 0 20"};
     }

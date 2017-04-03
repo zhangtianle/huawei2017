@@ -1,6 +1,8 @@
 package com.filetool.util;
 
+import com.cacheserverdeploy.algorithm.NetFlow;
 import com.cacheserverdeploy.model.Evaluate;
+import com.cacheserverdeploy.model.NetInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +62,7 @@ public class Chromosome {
         }
     }
 
-    public Chromosome clone(final Chromosome c) {
+    public Chromosome clone(Chromosome c) {
         if (c == null || c.gene == null)
             return null;
         Chromosome copy;
@@ -98,12 +100,13 @@ public class Chromosome {
         return list;
     }
 
-    public Evaluate getScore(Chromosome p) {
+    public Evaluate getScore(Chromosome p, NetInfo netInfo) {
+        NetFlow netFlow = new NetFlow(netInfo);
         ArrayList<Integer> sever = new ArrayList<Integer>();
         for (int i = 0; i < p.geneLen; i++) {
             if (p.gene[i] == true) sever.add(i);
         }
-        Evaluate score = calC(sever);
+//        Evaluate score = netFlow.calC(sever);
         return score;
     }
 
