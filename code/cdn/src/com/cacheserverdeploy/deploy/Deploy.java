@@ -4,7 +4,6 @@ import com.filetool.util.GeneticAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
 
 public class Deploy {
     /**
@@ -24,7 +23,7 @@ public class Deploy {
     public static class evaluate {
         public double error;
         public int cost;
-        public ArrayList<String> list;
+        public ArrayList<List> list;
     }
 
     static int E;  //边的个数
@@ -37,7 +36,7 @@ public class Deploy {
     public static int numServer;
     static int lines; //文件行数
     static int num_T;
-    static List<String> link=new ArrayList<String>();
+    static List<String> link = new ArrayList<String>();
     static edge[] e;
     static int en = 0;
     static int[] head;
@@ -97,8 +96,8 @@ public class Deploy {
         int mincost = 0;  //最小费用
         int flow = 0;
         int[] output = new int[T_cost.size()]; //初始化为0,每个消费节点获得的流量总数
-//        for (int i = 0; i < T_cost.size(); i++) output[i] = 0;
-        ArrayList<String> string = new ArrayList<String>();
+        for (int i = 0; i < T_cost.size(); i++) output[i] = 0;
+        ArrayList<List> string = new ArrayList<List>();
         while (SPFA(s, t, n)) {
             int minflow = Integer.MAX_VALUE;         //路径最小流量
             ArrayList<Integer> path = new ArrayList<Integer>();
@@ -111,21 +110,25 @@ public class Deploy {
                 e[i].cap -= minflow;   //当前边减去最小流量
                 e[i ^ 1].cap += minflow;  //反向边加上最小流量
             }
-//			System.out.println(path);
             if (minflow != Integer.MAX_VALUE) {
-                for (int i =1;i< path.size();i++) {
-                    string.add(path.get(i) + "");
+
+                List<Integer> line = new ArrayList<Integer>();
+
+                for (int i = 1; i < path.size(); i++) {
+                    line.add(path.get(i));
                 }
-                String ss = string.get(string.size() - 1);
-                int index = T_list.indexOf(Integer.parseInt(ss));
-                string.add(index + "");
-                string.add(minflow + "");
-                string.add("\r\n");
+                int ss = line.get(line.size() - 1);
+                int index = T_list.indexOf(ss);
+
+                line.add(index);
+                line.add(minflow);
+
+                string.add(line);
             }
             mincost += dist[t] * minflow;
             if (T_list.contains(path.get(0))) {
-                int ind = T_list.indexOf(path.get(0));
-                output[ind] += minflow;
+                int index = T_list.indexOf(path.get(0));
+                output[index] += minflow;
             }
         }
         double sum_error = 0.0;
@@ -175,7 +178,7 @@ public class Deploy {
         dist = new int[N];
         visited = new boolean[N];
         //********************************************//
-        for (String str:link) {
+        for (String str : link) {
             String[] s = str.split("\\s");
             int a = Integer.valueOf(s[0]);
             int b = Integer.valueOf(s[1]);
@@ -194,14 +197,41 @@ public class Deploy {
         return res;
 
     }
+
+    private static String listToString(List list) {
+        String res = list.get(0) + "";
+        for (int i = 1; i < list.size(); i++) {
+            res += " " + list.get(i);
+        }
+        return res;
+    }
+
+    private static String[] changeResult(List<List> resultgraph) {
+
+        int len = resultgraph.size();
+
+        String[] result = new String[len + 2];
+        result[0] = len + "";
+        result[1] = "";
+        for (int i = 0; i < len; i++) {
+            result[i + 2] = listToString(resultgraph.get(i));
+        }
+
+        return result;
+    }
+
+
     public static String[] deployServer(String[] graphContent) {
-            readData(graphContent);
-            GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100,50);
-            evaluate calculate = geneticAlgorithm.calculate();
-            System.out.println(calculate.error);
-            System.out.println(calculate.cost);
-            System.out.println(calculate.list);
-            return null;
+        readData(graphContent);
+        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100, 50);
+        evaluate calculate = geneticAlgorithm.calculate();
+
+        ArrayList<List> resultgraph = calculate.list;
+
+//        System.out.println(calculate.error);
+//        System.out.println(calculate.cost);
+//        System.out.println(calculate.list);
+        return changeResult(resultgraph);
     }
 
 }

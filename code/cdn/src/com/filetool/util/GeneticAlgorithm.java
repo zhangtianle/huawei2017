@@ -1,17 +1,11 @@
 package com.filetool.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.cacheserverdeploy.deploy.Deploy;
 import com.cacheserverdeploy.deploy.Deploy.evaluate;
-import com.sun.deploy.util.SystemUtils;
 
-import static com.cacheserverdeploy.deploy.Deploy.T_cost;
-import static com.cacheserverdeploy.deploy.Deploy.T_list;
+import java.util.ArrayList;
+
 import static com.cacheserverdeploy.deploy.Deploy.calC;
-import java.util.Random;
 
 public class GeneticAlgorithm {
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
@@ -45,16 +39,21 @@ public class GeneticAlgorithm {
     }
 
     public evaluate calculate() {
+        long startTime=System.currentTimeMillis();
         generation = 1;
         init();
         while (generation <= maxIter) {
+            // 计时器
+            long endTime=System.currentTimeMillis();
+            float excTime=(float)(endTime-startTime)/1000;
+            if (excTime > 85) {
+                return bestScore;
+            }
             evolve();
             generation++;
-            System.out.println("the times is:"+generation);
-            System.out.println("the cost is:"+bestScore.cost);
+//            System.out.println("the times is:"+generation);
+//            System.out.println("the cost is:"+bestScore.cost);
         }
-//        System.out.println(bestScore.error);
-//        System.out.println(bestScore.list);
         return bestScore;
     }
 
