@@ -5,6 +5,7 @@ import com.cacheserverdeploy.deploy.Deploy.evaluate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import static com.cacheserverdeploy.deploy.Deploy.calC;
 
@@ -43,9 +44,18 @@ public class GeneticAlgorithm {
     }
 
     public evaluate calculate() {
+        long startTime=System.currentTimeMillis();
         generation = 1;
         init();
         while (generation <= maxIter) {
+
+            // 计时器
+            long endTime=System.currentTimeMillis();
+            float excTime=(float)(endTime-startTime)/1000;
+            if (excTime > 80) {
+                return bestScore;
+            }
+
             evolve();
             generation++;
             System.out.println(generation);

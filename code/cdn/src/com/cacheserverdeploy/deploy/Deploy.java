@@ -2,8 +2,7 @@ package com.cacheserverdeploy.deploy;
 
 import com.filetool.util.GeneticAlgorithm;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Deploy {
     /**
@@ -59,7 +58,8 @@ public class Deploy {
     }
 
     static public boolean SPFA(int s, int t, int n) {
-        List<Integer> list = new ArrayList<Integer>();
+//        List<Integer> list = new ArrayList<Integer>();
+        Deque<Integer> queue = new LinkedList<Integer>();
         for (int i = 0; i < n; i++) {
             pre[i] = -1;
             visited[i] = false;
@@ -67,20 +67,33 @@ public class Deploy {
         }
         visited[s] = true;
         dist[s] = 0;
-        list.add(s);
-        while (list.size() != 0) {
-            int current = list.get(0);
-            list.remove(0);
+        queue.add(s);
+//        list.add(s);
+        while (queue.size() != 0) {
+//        while (list.size() != 0) {
+            int current = queue.getFirst();
+//            int current = list.get(0);
+            queue.pollFirst();
+//            list.remove(0);
             visited[current] = false;
             for (int i = head[current]; i != -1; i = e[i].next) {
                 if (e[i].cap != 0) {
                     int v = e[i].to;
                     if (dist[v] > dist[current] + e[i].cost) {
                         dist[v] = dist[current] + e[i].cost;
+//                        if (dist[t] != Integer.MAX_VALUE) {
+//                            return true;
+//                        }
                         pre[v] = i;
                         if (!visited[v]) {
                             visited[v] = true;
-                            list.add(v);
+                            if (queue.size() != 0 && dist[v] < dist[queue.getFirst()]) {
+                                queue.addFirst(v);
+                            } else {
+//                                list.add(v);
+                                queue.add(v);
+                            }
+
                         }
                     }
                 }
@@ -240,11 +253,12 @@ public class Deploy {
 
         readData(graphContent);
 
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100,200);
+        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100,20);
         evaluate calculate = geneticAlgorithm.calculate();
-        ArrayList<List> resultgraph = calculate.list;
+//        ArrayList<List> resultgraph = calculate.list;
 
-        return changeResult(resultgraph);
+//        return changeResult(null);
+        return null;
 
     }
 }
