@@ -1,36 +1,37 @@
 package com.filetool.util;
 
-import com.cacheserverdeploy.deploy.Deploy;
-import com.cacheserverdeploy.deploy.Deploy.evaluate;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
+import java.util.Random;
 
+import com.cacheserverdeploy.deploy.Deploy;
+import com.cacheserverdeploy.deploy.Deploy.evaluate;
+import com.sun.deploy.util.SystemUtils;
+
+import static com.cacheserverdeploy.deploy.Deploy.T_cost;
+import static com.cacheserverdeploy.deploy.Deploy.T_list;
 import static com.cacheserverdeploy.deploy.Deploy.calC;
+import java.util.Random;
 
 public class GeneticAlgorithm {
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
     private int popSize; // 种群数量
     private int geneSize; // 基因长度编码
     private int maxIter = 100;
-    private double pm = 0.02;
-    private double pc = 0.5;
-    private int[] bandwidth;    //消费节带宽需求
+    private double pm = 0.01;
+    private double pc = 0.8;
     private int consumptionNum; // 消费节点个数
     private int generation = 1;//当前遗传到第几代
     private evaluate bestScore; //最好的情况
 
     public GeneticAlgorithm(int popSize, int geneSize, int maxIter,
-                            double pm, double pc, int[] bandwidth) {
+                            double pm, double pc) {
         super();
         this.popSize = popSize;
         this.geneSize = geneSize;  //基因长度
         this.maxIter = maxIter;
         this.pm = pm;
         this.pc = pc;
-        this.bandwidth = bandwidth;
-        this.consumptionNum = bandwidth.length;
         this.bestScore.error = 0.0;
         this.bestScore.cost = 100000;
     }
@@ -38,45 +39,54 @@ public class GeneticAlgorithm {
     public GeneticAlgorithm(int popSize, int maxIter) {
         this.bestScore = new evaluate();
         this.bestScore.cost = Integer.MAX_VALUE;
-        this.bestScore.error = 10.0;
+        this.bestScore.error = 1000.0;
         this.popSize = popSize;
         this.maxIter = maxIter;
     }
 
     public evaluate calculate() {
-        long startTime=System.currentTimeMillis();
         generation = 1;
         init();
         while (generation <= maxIter) {
-
-            // 计时器
-            long endTime=System.currentTimeMillis();
-            float excTime=(float)(endTime-startTime)/1000;
-            if (excTime > 80) {
-                return bestScore;
-            }
-
             evolve();
             generation++;
-            System.out.println(generation);
-            System.out.println(bestScore.cost);
+            System.out.println("the times is:"+generation);
+            System.out.println("the cost is:"+bestScore.cost);
         }
-        System.out.println(bestScore.list);
+//        System.out.println(bestScore.error);
+//        System.out.println(bestScore.list);
         return bestScore;
     }
 
     private void init() {
-        float p = (float) Deploy.T_list.size() / (float) Deploy.NN;
-        for (int i = 0; i < popSize; i++) {
-            boolean[] booleans = new boolean[Deploy.NN];
-            for (int j = 0; j < booleans.length; j++) {
-                double random = Math.random();
-                if (random < p) {
-                    booleans[j] = true;
+        for(int i=0;i<popSize;i++){
+            boolean[] bool = new boolean[Deploy.NN];
+            ArrayList<Integer> choose = new ArrayList<Integer>();
+            int cc = (int) Math.round(Math.random()*(Deploy.T_list.size()-2)+1);  //消费节点随机数
+            if(Math.random()<0.5)
+            {
+                while(choose.size()<cc) {
+                    int initNode = (int) Math.round(Math.random() * (Deploy.T_list.size() - 1));
+                    int node = Deploy.T_list.get(initNode);
+                    if (choose.indexOf(node) == -1) {
+                        choose.add(node);
+                    }
+                }
+            }else{
+                while(choose.size()<cc) {
+                    int initNodes = (int) Math.round(Math.random() * (Deploy.NN-1));
+                    if (choose.indexOf(initNodes) == -1){
+                        choose.add(initNodes);
+                    }
                 }
             }
-            Chromosome chro = new Chromosome(booleans);
+//            System.out.println(choose);
+            for(int k=0;k<choose.size();k++){
+                bool[choose.get(k)] = true;
+            }
+            Chromosome chro = new Chromosome(bool);
             population.add(chro);
+
         }
     }
 
@@ -87,10 +97,10 @@ public class GeneticAlgorithm {
         ArrayList<evaluate> resPopulation = new ArrayList<evaluate>();
         pops = clone(population);
         while (pops.size() > 0) {
-            int p1 = (int) (Math.random() * pops.size() % pops.size());
+            int p1 = (int) Math.round(Math.random()*(pops.size()-1));
             Chromosome c1 = pops.get(p1);
             pops.remove(p1);
-            int p2 = (int) (Math.random() * pops.size() % pops.size());
+            int p2 = (int) Math.round(Math.random()*(pops.size()-1));
             Chromosome c2 = pops.get(p2);
             pops.remove(p2);
             ///无放回的随机取样
@@ -162,7 +172,7 @@ public class GeneticAlgorithm {
         ArrayList<evaluate> output = new ArrayList<evaluate>();
         for (Chromosome chro : population) {
             boolean[] gene = chro.getGene();
-            List<Integer> server = new ArrayList<Integer>();
+            ArrayList<Integer> server = new ArrayList<Integer>();
             for (int i = 0; i < gene.length; i++) {
                 if (gene[i] == true) {
                     server.add(i);
@@ -178,7 +188,7 @@ public class GeneticAlgorithm {
     private ArrayList<Chromosome> clone(ArrayList<Chromosome> pop) {
         ArrayList<Chromosome> pops = new ArrayList<Chromosome>();
         if (pop == null) return null;
-        for (int i = 0; i < pop.size(); i++) pops.add(pop.get(i));
+        for (Chromosome Chro: pop) pops.add(Chro);
         return pops;
     }
 

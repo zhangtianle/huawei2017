@@ -1,5 +1,6 @@
 package com.filetool.util;
 
+import com.cacheserverdeploy.deploy.Deploy;
 import com.cacheserverdeploy.deploy.Deploy.evaluate;
 
 import java.util.ArrayList;
@@ -26,30 +27,23 @@ public class Chromosome {
 	}
 
 
-	private void initGeneSize(int size){
-		if(size <= 0){
-			return;
-		}
-		gene = new boolean[size];
-		for(int i=0;i<size;i++) gene[i] = false;
-	}
+//	private void initGeneSize(int size){
+//		if(size <= 0){
+//			return;
+//		}
+//		gene = new boolean[size];
+//		for(int i=0;i<size;i++) gene[i] = false;
+//	}
 
 	public void mutation(double pm){
-		int size = gene.length;
+		int size = geneLen;
 		for(int i=0;i<size;i++){
 			if (Math.random()<pm) gene[i] = !gene[i];
 		}
 	}
 
-	public static Chromosome clone(final Chromosome c){
-		if(c == null || c.gene == null)
-			return null;
-		Chromosome copy;
-		copy = new Chromosome(Arrays.copyOf(c.gene, c.gene.length));
-		return copy;
-	}
 
-	public static ArrayList<Chromosome> genetic(Chromosome p1, Chromosome p2, double pc){
+	public static ArrayList<Chromosome> genetic(Chromosome p1,Chromosome p2,double pc){
 		if(p1==null&&p2==null){
 			return null;
 		}
@@ -61,13 +55,12 @@ public class Chromosome {
 		}
 		Chromosome c1 = clone(p1);
 		Chromosome c2 = clone(p2);
-		int size = c1.gene.length;
-		int cut1 = (int) (Math.random()*size) % size;
-		int cut2 = (int) (Math.random()*size) % size;
+		int cut1 = (int) Math.round(Math.random()*(Deploy.NN-2))+1;
+		int cut2 = (int) Math.round(Math.random()*(Deploy.NN-2))+1;
 		int minCut = cut1 > cut2 ? cut2 : cut1;
 		int maxCut = cut1 > cut2 ? cut1 : cut2;
 		if (Math.random()<pc){
-			for(int i=minCut;i<=maxCut;i++){
+			for(int i=minCut;i<maxCut;i++){
 				boolean t = c1.gene[i];
 				c1.gene[i] = c2.gene[i];
 				c2.gene[i] = t;
@@ -86,6 +79,15 @@ public class Chromosome {
 		evaluate score = calC(sever);
 		return score;
 
+	}
+
+
+	public static Chromosome clone(Chromosome c){
+		if(c == null || c.gene == null)
+			return null;
+		Chromosome copy;
+		copy = new Chromosome(Arrays.copyOf(c.gene, c.gene.length));
+		return copy;
 	}
 
 	public boolean[] getGene() {
