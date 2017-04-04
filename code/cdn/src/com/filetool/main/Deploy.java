@@ -1,4 +1,5 @@
-package com.cacheserverdeploy.deploy;
+package com.filetool.main;
+
 /**
  * @author QQ353688193
  *
@@ -16,11 +17,6 @@ public class Deploy
     {
 
         /**do your work here**/
-        Tool tool = new Tool();
-        NetInfo netInfo = tool.readData(graphContent);
-
-        NetFlow netFlow = new NetFlow(netInfo);
-        boolean b[] = new boolean[netInfo.getNodeNum()];
 
         return new String[]{"17","\r\n","0 8 0 20"};
     }
