@@ -10,21 +10,21 @@ import static com.cacheserverdeploy.deploy.Deploy.calC;
 
 public class GeneticAlgorithm {
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
-    private int popSize; // ÖÖÈºÊıÁ¿
-    private int geneSize; // »ùÒò³¤¶È±àÂë
+    private int popSize; // ç§ç¾¤æ•°é‡
+    private int geneSize; // åŸºå› é•¿åº¦ç¼–ç 
     private int maxIter = 100;
     private double pm = 0.02;
     private double pc = 0.5;
-    private int[] bandwidth;    //Ïû·Ñ½Ú´ø¿íĞèÇó
-    private int consumptionNum; // Ïû·Ñ½Úµã¸öÊı
-    private int generation = 1;//µ±Ç°ÒÅ´«µ½µÚ¼¸´ú
-    private evaluate bestScore; //×îºÃµÄÇé¿ö
+    private int[] bandwidth;    //æ¶ˆè´¹èŠ‚å¸¦å®½éœ€æ±‚
+    private int consumptionNum; // æ¶ˆè´¹èŠ‚ç‚¹ä¸ªæ•°
+    private int generation = 1;//å½“å‰é—ä¼ åˆ°ç¬¬å‡ ä»£
+    private evaluate bestScore; //æœ€å¥½çš„æƒ…å†µ
 
     public GeneticAlgorithm(int popSize, int geneSize, int maxIter,
                             double pm, double pc, int[] bandwidth) {
         super();
         this.popSize = popSize;
-        this.geneSize = geneSize;  //»ùÒò³¤¶È
+        this.geneSize = geneSize;  //åŸºå› é•¿åº¦
         this.maxIter = maxIter;
         this.pm = pm;
         this.pc = pc;
@@ -83,7 +83,7 @@ public class GeneticAlgorithm {
             int p2 = (int) (Math.random() * pops.size() % pops.size());
             Chromosome c2 = pops.get(p2);
             pops.remove(p2);
-            ///ÎŞ·Å»ØµÄËæ»úÈ¡Ñù
+            ///æ— æ”¾å›çš„éšæœºå–æ ·
             ArrayList<Chromosome> children = Chromosome.genetic(c1, c2, pc);
             if (children != null) {
                 for (Chromosome child : children) {
@@ -113,7 +113,7 @@ public class GeneticAlgorithm {
             nextPopulation.remove(p2);
             evaluate r2 = resPopulation.get(p2);
             resPopulation.remove(p2);
-            /////Ñ¡Ôñ»úÖÆ
+            /////é€‰æ‹©æœºåˆ¶
 
             if (r1.error <= 0 && r2.error > 0) {
                 population.add(c1);
@@ -164,7 +164,7 @@ public class GeneticAlgorithm {
         return output;
     }
 
-    //¿ËÂ¡Ò»¸öÈºÌå
+    //å…‹éš†ä¸€ä¸ªç¾¤ä½“
     private ArrayList<Chromosome> clone(ArrayList<Chromosome> pop) {
         ArrayList<Chromosome> pops = new ArrayList<Chromosome>();
         if (pop == null) return null;

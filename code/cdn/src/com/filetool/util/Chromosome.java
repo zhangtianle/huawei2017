@@ -9,13 +9,13 @@ import static com.cacheserverdeploy.deploy.Deploy.calC;
 
 /**
  *
- * @Description: »ùÒòÒÅ´«È¾É«Ìå
+ * @Description: åŸºå› é—ä¼ æŸ“è‰²ä½“
  *
  */
 public class Chromosome {
-	private boolean[] gene; //»ùÒòĞòÁĞ
-	private evaluate score;  //ËùµÃ·ÖÊı
-	private int geneLen; //»ùÒò³¤¶È
+	private boolean[] gene; //åŸºå› åºåˆ—
+	private evaluate score;  //æ‰€å¾—åˆ†æ•°
+	private int geneLen; //åŸºå› é•¿åº¦
 
 	public void getScore(evaluate score){
 		this.score = score;
