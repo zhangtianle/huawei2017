@@ -58,7 +58,7 @@ public class Deploy {
     }
 
     static public boolean SPFA(int s, int t, int n) {
-//        List<Integer> list = new ArrayList<Integer>();
+        int distSum = 0;
         Deque<Integer> queue = new LinkedList<Integer>();
         for (int i = 0; i < n; i++) {
             pre[i] = -1;
@@ -68,14 +68,20 @@ public class Deploy {
         visited[s] = true;
         dist[s] = 0;
         queue.add(s);
-//        list.add(s);
+        int num = 1;
         while (queue.size() != 0) {
-//        while (list.size() != 0) {
+            float avgDis = (float) distSum / num;
             int current = queue.getFirst();
-//            int current = list.get(0);
-            queue.pollFirst();
-//            list.remove(0);
+            System.out.println(dist[current]);
+
+            while (queue.size() != 0 && avgDis < dist[current]) {
+                queue.addLast(current);
+                queue.removeFirst();
+                current = queue.pollFirst();
+            }
+
             visited[current] = false;
+            distSum -= dist[current];
             for (int i = head[current]; i != -1; i = e[i].next) {
                 if (e[i].cap != 0) {
                     int v = e[i].to;
@@ -86,14 +92,10 @@ public class Deploy {
 //                        }
                         pre[v] = i;
                         if (!visited[v]) {
+                            distSum += dist[v];
                             visited[v] = true;
-                            if (queue.size() != 0 && dist[v] < dist[queue.getFirst()]) {
-                                queue.addFirst(v);
-                            } else {
-//                                list.add(v);
-                                queue.add(v);
-                            }
-
+                            num++;
+                            queue.add(v);
                         }
                     }
                 }
@@ -125,7 +127,7 @@ public class Deploy {
 
                 List<Integer> line = new ArrayList<Integer>();
 
-                for (int i =1;i< path.size();i++) {
+                for (int i = 1; i < path.size(); i++) {
                     line.add(path.get(i));
 //                    string.add(path.get(i) + "");
                 }
@@ -238,11 +240,11 @@ public class Deploy {
 
         int len = resultgraph.size();
 
-        String[] result = new String[len+2];
+        String[] result = new String[len + 2];
         result[0] = len + "";
         result[1] = "";
         for (int i = 0; i < len; i++) {
-            result[i+2] = listToString(resultgraph.get(i));
+            result[i + 2] = listToString(resultgraph.get(i));
         }
 
         return result;
@@ -253,7 +255,7 @@ public class Deploy {
 
         readData(graphContent);
 
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100,20);
+        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100, 20);
         evaluate calculate = geneticAlgorithm.calculate();
 //        ArrayList<List> resultgraph = calculate.list;
 
