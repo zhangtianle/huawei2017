@@ -46,13 +46,13 @@ public class GeneticAlgorithm {
             // 计时器
             long endTime=System.currentTimeMillis();
             float excTime=(float)(endTime-startTime)/1000;
-            if (excTime > 85) {
+            if (excTime > 45) {
                 return bestScore;
             }
             evolve();
             generation++;
-//            System.out.println("the times is:"+generation);
-//            System.out.println("the cost is:"+bestScore.cost);
+            System.out.println("the times is:"+generation);
+            System.out.println("the cost is:"+bestScore.cost);
         }
         return bestScore;
     }

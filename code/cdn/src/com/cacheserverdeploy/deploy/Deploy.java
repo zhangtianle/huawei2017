@@ -12,7 +12,7 @@ public class Deploy {
      * @return caseouput info
      * @see [huawei]
      */
-    static class edge {
+    static class Edge {
         int from;
         int to;
         int cap;
@@ -27,7 +27,6 @@ public class Deploy {
     }
 
     static int E;  //边的个数
-    static int EE;  //添加方向边和反向边的总个数
     public static int NN;
     static int N;  //节点加上超级原点，汇点。
     static int S;  //超级原点
@@ -37,8 +36,10 @@ public class Deploy {
     static int lines; //文件行数
     static int num_T;
     static List<String> link = new ArrayList<String>();
-    static edge[] e;
+    //    static Edge[] e;
+    static List<Edge> edgeList = new ArrayList<Edge>();
     static int en = 0;
+    static int enT;
     static int[] head;
     static int[] pre;
     static int[] dist;
@@ -46,22 +47,23 @@ public class Deploy {
     public static ArrayList<Integer> T_list = new ArrayList<Integer>();
     public static ArrayList<Integer> T_cost = new ArrayList<Integer>();
 
-    static public void add(int x, int y, int f, int c) {
-        if (e[en] == null) e[en] = new edge();
-        e[en].from = x;
-        e[en].to = y;
-        e[en].cap = f;
-        e[en].cost = c;
-        e[en].next = head[x];
+    static public void add(int x, int y, int f, int c, List<Edge> edlist) {
+        Edge edge = new Edge();
+        edge.from = x;
+        edge.to = y;
+        edge.cap = f;
+        edge.cost = c;
+        edge.next = head[x];
         head[x] = en++;
+        edlist.add(edge);
     }
 
-    static public void addedge(int x, int y, int f, int c) {
-        add(x, y, f, c);
-        add(y, x, 0, -c);
+    static public void addedge(int x, int y, int f, int c, List<Edge> edlist) {
+        add(x, y, f, c, edlist);
+        add(y, x, 0, -c, edlist);
     }
 
-    static public boolean SPFA(int s, int t, int n) {
+    static public boolean SPFA(int s, int t, int n, List<Edge> totalEdges) {
         List<Integer> list = new ArrayList<Integer>();
         for (int i = 0; i < n; i++) {
             pre[i] = -1;
@@ -75,11 +77,11 @@ public class Deploy {
             int current = list.get(0);
             list.remove(0);
             visited[current] = false;
-            for (int i = head[current]; i != -1; i = e[i].next) {
-                if (e[i].cap != 0) {
-                    int v = e[i].to;
-                    if (dist[v] > dist[current] + e[i].cost) {
-                        dist[v] = dist[current] + e[i].cost;
+            for (int i = head[current]; i != -1; i = totalEdges.get(i).next) {
+                if (totalEdges.get(i).cap != 0) {
+                    int v = totalEdges.get(i).to;
+                    if (dist[v] > dist[current] + totalEdges.get(i).cost) {
+                        dist[v] = dist[current] + totalEdges.get(i).cost;
                         pre[v] = i;
                         if (!visited[v]) {
                             visited[v] = true;
@@ -92,23 +94,24 @@ public class Deploy {
         return dist[t] != Integer.MAX_VALUE;        //找不到一条到终点的路
     }
 
-    static public evaluate MCMF(int s, int t, int n) {
+    static public evaluate MCMF(int s, int t, int n, List<Edge> totalEdges) {
+//        System.out.println(totalEdges.size() + "   size  " + edgeList.size());
         int mincost = 0;  //最小费用
         int flow = 0;
         int[] output = new int[T_cost.size()]; //初始化为0,每个消费节点获得的流量总数
         for (int i = 0; i < T_cost.size(); i++) output[i] = 0;
         ArrayList<List> string = new ArrayList<List>();
-        while (SPFA(s, t, n)) {
+        while (SPFA(s, t, n, totalEdges)) {
             int minflow = Integer.MAX_VALUE;         //路径最小流量
             ArrayList<Integer> path = new ArrayList<Integer>();
-            for (int i = pre[t], k1 = e[i].from; i != -1; k1 = e[i].from, i = pre[k1]) {
-                minflow = Math.min(minflow, e[i].cap);
+            for (int i = pre[t], k1 = totalEdges.get(i).from; i != -1; k1 = totalEdges.get(i).from, i = pre[k1]) {
+                minflow = Math.min(minflow, totalEdges.get(i).cap);
                 path.add(k1);
             }
             flow += minflow;
-            for (int i = pre[t], k1 = e[i].from; i != -1; k1 = e[i].from, i = pre[k1]) {
-                e[i].cap -= minflow;   //当前边减去最小流量
-                e[i ^ 1].cap += minflow;  //反向边加上最小流量
+            for (int i = pre[t], k1 = totalEdges.get(i).from; i != -1; k1 = totalEdges.get(i).from, i = pre[k1]) {
+                totalEdges.get(i).cap -= minflow;   //当前边减去最小流量
+                totalEdges.get(i ^ 1).cap += minflow;  //反向边加上最小流量
             }
             if (minflow != Integer.MAX_VALUE) {
 
@@ -137,6 +140,10 @@ public class Deploy {
         out.cost = mincost + numServer * costServer;
         out.error = sum_error;
         out.list = string;
+
+//        System.out.println(out.error + "============");
+
+
         return out;
     }
 
@@ -161,39 +168,58 @@ public class Deploy {
             T_list.add(a);
             T_cost.add(b);
         }
-    }
 
-
-    public static evaluate calC(ArrayList<Integer> server) {
-        //*************************************************//
-        EE = E * 1000;
-        e = new edge[EE];
         en = 0;
         N = NN + 2;
         head = new int[N];
         for (int i = 0; i < N; i++) {
             head[i] = -1;
         }
+
         pre = new int[N];
         dist = new int[N];
         visited = new boolean[N];
-        //********************************************//
+
+
         for (String str : link) {
             String[] s = str.split("\\s");
             int a = Integer.valueOf(s[0]);
             int b = Integer.valueOf(s[1]);
             int c = Integer.valueOf(s[2]);
             int d = Integer.valueOf(s[3]);
-            addedge(a, b, c, d);
-            addedge(b, a, c, d);
+            addedge(a, b, c, d, edgeList);
+            addedge(b, a, c, d, edgeList);
         }
+        for (int i = 0; i < T_list.size(); i++) {
+            addedge(S, T_list.get(i), T_cost.get(i), 0, edgeList); //添加消费节点到超级汇点
+        }
+
+        enT = en;
+    }
+
+    public static evaluate calC(ArrayList<Integer> server) {
+        //*************************************************//
+
+        pre = new int[N];
+        dist = new int[N];
+        visited = new boolean[N];
+
+        //********************************************//
+        List<Edge> totalEdges = new ArrayList<Edge>();
+        totalEdges.addAll(edgeList);
+        en = enT;
+
+        head[N-1] = -1;
+
         //添加超级原点,汇点
         S = NN + 0;   //超级原点
         T = NN + 1;  //超级汇点
         numServer = server.size();
-        for (int i = 0; i < T_list.size(); i++) addedge(S, T_list.get(i), T_cost.get(i), 0); //添加消费节点到超级汇点
-        for (int i = 0; i < server.size(); i++) addedge(server.get(i), T, Integer.MAX_VALUE, 0);
-        evaluate res = MCMF(S, T, N);
+
+        for (int i = 0; i < server.size(); i++) {
+            addedge(server.get(i), T, Integer.MAX_VALUE, 0, totalEdges);
+        }
+        evaluate res = MCMF(S, T, N, totalEdges);
         return res;
 
     }
@@ -223,7 +249,7 @@ public class Deploy {
 
     public static String[] deployServer(String[] graphContent) {
         readData(graphContent);
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(100, 50);
+        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(50, 20);
         evaluate calculate = geneticAlgorithm.calculate();
 
         ArrayList<List> resultgraph = calculate.list;
