@@ -2,3 +2,5 @@ com/filetool/main/Main.java
 com/filetool/util/FileUtil.java
 com/filetool/util/LogUtil.java
 com/cacheserverdeploy/deploy/Deploy.java
+com/filetool/util/Chromosome.java
+com/filetool/util/GeneticAlgorithm.java

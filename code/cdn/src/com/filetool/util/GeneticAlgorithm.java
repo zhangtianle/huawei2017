@@ -1,7 +1,7 @@
 package com.filetool.util;
 
 import com.cacheserverdeploy.deploy.Deploy;
-import com.cacheserverdeploy.deploy.Deploy.evaluate;
+import com.cacheserverdeploy.deploy.Deploy.Evaluate;
 
 import java.util.ArrayList;
 
@@ -12,11 +12,12 @@ public class GeneticAlgorithm {
     private int popSize; // 种群数量
     private int geneSize; // 基因长度编码
     private int maxIter = 100;
-    private double pm = 0.01;
+    private double pm = 0.05;
     private double pc = 0.8;
     private int consumptionNum; // 消费节点个数
     private int generation = 1;//当前遗传到第几代
-    private evaluate bestScore; //最好的情况
+    private Evaluate bestScore; //最好的情况
+    private Chromosome bestChromosome;
 
     public GeneticAlgorithm(int popSize, int geneSize, int maxIter,
                             double pm, double pc) {
@@ -31,14 +32,14 @@ public class GeneticAlgorithm {
     }
 
     public GeneticAlgorithm(int popSize, int maxIter) {
-        this.bestScore = new evaluate();
+        this.bestScore = new Evaluate();
         this.bestScore.cost = Integer.MAX_VALUE;
         this.bestScore.error = 1000.0;
         this.popSize = popSize;
         this.maxIter = maxIter;
     }
 
-    public evaluate calculate() {
+    public Evaluate calculate() {
         long startTime=System.currentTimeMillis();
         generation = 1;
         init();
@@ -46,46 +47,48 @@ public class GeneticAlgorithm {
             // 计时器
             long endTime=System.currentTimeMillis();
             float excTime=(float)(endTime-startTime)/1000;
-            if (excTime > 45) {
+            if (excTime > 70) {
                 return bestScore;
             }
             evolve();
             generation++;
-            System.out.println("the times is:"+generation);
-            System.out.println("the cost is:"+bestScore.cost);
+
+//
+//            System.out.println("the times is:"+generation);
+//            System.out.println("the cost is:"+bestScore.cost);
         }
         return bestScore;
     }
-
+    
     private void init() {
+        //******************************************************//
         for(int i=0;i<popSize;i++){
             boolean[] bool = new boolean[Deploy.NN];
-            ArrayList<Integer> choose = new ArrayList<Integer>();
-            int cc = (int) Math.round(Math.random()*(Deploy.T_list.size()-2)+1);  //消费节点随机数
-            if(Math.random()<0.5)
-            {
-                while(choose.size()<cc) {
+            ArrayList<Integer> choose1 = new ArrayList<Integer>();
+            if (Math.random()<0.5) {
+                int cc = (int) Math.round(Math.random()*(Deploy.T_list.size()-2)+1);  //消费节点随机数
+                while (choose1.size() < cc) {
                     int initNode = (int) Math.round(Math.random() * (Deploy.T_list.size() - 1));
                     int node = Deploy.T_list.get(initNode);
-                    if (choose.indexOf(node) == -1) {
-                        choose.add(node);
+                    if (choose1.indexOf(node) == -1) {
+                        choose1.add(node);
                     }
                 }
             }else{
-                while(choose.size()<cc) {
-                    int initNodes = (int) Math.round(Math.random() * (Deploy.NN-1));
-                    if (choose.indexOf(initNodes) == -1){
-                        choose.add(initNodes);
+                int cc = (int) Math.round(Math.random()*(Deploy.NN-2)+1);
+                while (choose1.size() < cc) {
+                    int node = (int) Math.round(Math.random() * (Deploy.NN - 1));
+                    if (choose1.indexOf(node) == -1) {
+                        choose1.add(node);
                     }
                 }
             }
 //            System.out.println(choose);
-            for(int k=0;k<choose.size();k++){
-                bool[choose.get(k)] = true;
+            for(int k=0;k<choose1.size();k++){
+                bool[choose1.get(k)] = true;
             }
             Chromosome chro = new Chromosome(bool);
             population.add(chro);
-
         }
     }
 
@@ -93,7 +96,7 @@ public class GeneticAlgorithm {
     private void evolve() {
 //		ArrayList<Chromosome> childPopulation = new ArrayList<Chromosome>();
         ArrayList<Chromosome> pops = new ArrayList<Chromosome>();
-        ArrayList<evaluate> resPopulation = new ArrayList<evaluate>();
+        ArrayList<Evaluate> resPopulation = new ArrayList<Evaluate>();
         pops = clone(population);
         while (pops.size() > 0) {
             int p1 = (int) Math.round(Math.random()*(pops.size()-1));
@@ -111,27 +114,27 @@ public class GeneticAlgorithm {
             }
         }
         mutation();
-        resPopulation = calculateScore();
-        selected(resPopulation);
+        ArrayList<Evaluate> resultP = calculateScore();
+        selected(resultP);
 
 //		calculateScore();
     }
 
-    private void selected(ArrayList<evaluate> resPopulation) {
+    private void selected(ArrayList<Evaluate> resultP) {
         ArrayList<Chromosome> nextPopulation = new ArrayList<Chromosome>();
         nextPopulation = clone(population);
         population = new ArrayList<Chromosome>();
         while (nextPopulation.size() > 0) {
             int p1 = (int) (Math.random() * nextPopulation.size() % nextPopulation.size());
             Chromosome c1 = nextPopulation.get(p1);
-            evaluate r1 = resPopulation.get(p1);
+            Evaluate r1 = resultP.get(p1);
             nextPopulation.remove(p1);
-            resPopulation.remove(p1);
+            resultP.remove(p1);
             int p2 = (int) (Math.random() * nextPopulation.size() % nextPopulation.size());
             Chromosome c2 = nextPopulation.get(p2);
             nextPopulation.remove(p2);
-            evaluate r2 = resPopulation.get(p2);
-            resPopulation.remove(p2);
+            Evaluate r2 = resultP.get(p2);
+            resultP.remove(p2);
             /////选择机制
 
             if (r1.error <= 0 && r2.error > 0) {
@@ -142,11 +145,13 @@ public class GeneticAlgorithm {
                 if (r1.cost <= r2.cost) {
                     if (bestScore.cost > r1.cost) {
                         bestScore = r1;
+                        bestChromosome = c1;
                     }
                     population.add(c1);
                 } else {
                     if (bestScore.cost > r2.cost) {
                         bestScore = r2;
+                        bestChromosome = c2;
                     }
                     population.add(c2);
                 }
@@ -167,8 +172,8 @@ public class GeneticAlgorithm {
 
     }
 
-    private ArrayList<evaluate> calculateScore() {
-        ArrayList<evaluate> output = new ArrayList<evaluate>();
+    private ArrayList<Evaluate> calculateScore() {
+        ArrayList<Evaluate> output = new ArrayList<Evaluate>();
         for (Chromosome chro : population) {
             boolean[] gene = chro.getGene();
             ArrayList<Integer> server = new ArrayList<Integer>();
@@ -177,7 +182,7 @@ public class GeneticAlgorithm {
                     server.add(i);
                 }
             }
-            evaluate sc = calC(server);
+            Evaluate sc = calC(server);
             output.add(sc);
         }
         return output;
@@ -211,8 +216,15 @@ public class GeneticAlgorithm {
         this.pm = pm;
     }
 
-    public evaluate getBestScore() {
+    public Evaluate getBestScore() {
         return bestScore;
     }
 
+    public Chromosome getBestChromosome() {
+        return bestChromosome;
+    }
+
+    public void setBestChromosome(Chromosome bestChromosome) {
+        this.bestChromosome = bestChromosome;
+    }
 }

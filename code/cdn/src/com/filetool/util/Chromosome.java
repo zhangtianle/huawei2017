@@ -1,7 +1,7 @@
 package com.filetool.util;
 
 import com.cacheserverdeploy.deploy.Deploy;
-import com.cacheserverdeploy.deploy.Deploy.evaluate;
+import com.cacheserverdeploy.deploy.Deploy.Evaluate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +15,10 @@ import static com.cacheserverdeploy.deploy.Deploy.calC;
  */
 public class Chromosome {
 	private boolean[] gene; //基因序列
-	private evaluate score;  //所得分数
+	private Evaluate score;  //所得分数
 	private int geneLen; //基因长度
 
-	public void getScore(evaluate score){
+	public void getScore(Evaluate score){
 		this.score = score;
 	}
 
@@ -43,7 +43,7 @@ public class Chromosome {
 	}
 
 
-	public static ArrayList<Chromosome> genetic(Chromosome p1,Chromosome p2,double pc){
+	public static ArrayList<Chromosome> genetic(Chromosome p1, Chromosome p2, double pc){
 		if(p1==null&&p2==null){
 			return null;
 		}
@@ -71,12 +71,12 @@ public class Chromosome {
 		list.add(c2);
 		return list;
 	}
-	public static evaluate getScore(Chromosome p){
+	public static Evaluate getScore(Chromosome p){
 		ArrayList<Integer> sever = new ArrayList<Integer>();
 		for(int i=0;i<p.geneLen;i++){
 			if (p.gene[i]==true) sever.add(i);
 		}
-		evaluate score = calC(sever);
+		Evaluate score = calC(sever);
 		return score;
 
 	}
@@ -98,11 +98,11 @@ public class Chromosome {
 		this.gene = gene;
 	}
 
-	public evaluate getScore() {
+	public Evaluate getScore() {
 		return score;
 	}
 
-	public void setScore(evaluate score) {
+	public void setScore(Evaluate score) {
 		this.score = score;
 	}
 
