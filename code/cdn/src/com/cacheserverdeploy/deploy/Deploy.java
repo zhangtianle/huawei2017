@@ -433,6 +433,60 @@ public class Deploy {
         return result;
     }
 
+    public static void emptyedge(){
+        en = 0;
+    }
+    public static int randwalk(int node){
+        if (head == null){
+            EE = (lines - num_T)*4 + num_T*8; //设置边数
+            e = new edge[EE];
+            for (int i = 0; i < EE; i++)
+            {
+                e[i] = new edge();
+            }
+            en = 0;
+            N = NN + 2;
+            head = new int[N];
+            for (int i = 0; i < N; i++) head[i] = -1;
+            //********************************************//
+            for (String str:link) {
+                String[] s = str.split("\\s");
+                int a = Integer.valueOf(s[0]);
+                int b = Integer.valueOf(s[1]);
+                int c = Integer.valueOf(s[2]);
+                int d = Integer.valueOf(s[3]);
+                add(a, b, c, d);
+                add(b, a, c, d);
+            }
+        }
+        int mincost = Integer.MAX_VALUE;
+        int skip = 5;
+        if (N > 200 && N < 400) {
+            skip = 10;
+        } else if (N > 400){
+            skip = 20;
+        }
+        int walktime = (int) Math.round(Math.random()*skip+1);
+//        int walktime = 3;
+        int desnode = node;
+        int idx = 0;
+        for (int i = 0; i < walktime; i++) {
+            for (int j = head[node]; j != -1; j = e[j].next) {
+                if (mincost > e[j].cost) {
+                    mincost = e[j].cost;
+                    idx = j;
+                }
+            }
+//            desnode = e[idx].v;
+            if(Math.random()<0.6) {
+                if(e[idx].v != T) {
+                    desnode = e[idx].v;
+                }
+            }
+        }
+        return desnode;
+    }
+
 
     public static String[] deployServer(String[] graphContent) {
         readData(graphContent);

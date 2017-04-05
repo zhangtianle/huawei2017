@@ -42,8 +42,34 @@ public class Chromosome {
 		}
 	}
 
+	public static ArrayList<Chromosome> genetic2(Chromosome p1,Chromosome p2,double pc){
+		if(p1==null&&p2==null){
+			return null;
+		}
+		if(p1.gene==null || p2.gene==null){
+			return null;
+		}
+		if(p1.gene.length != p2.gene.length){
+			return null;
+		}
+		Chromosome c1 = clone(p1);
+		Chromosome c2 = clone(p2);
 
-	public static ArrayList<Chromosome> genetic(Chromosome p1, Chromosome p2, double pc){
+		for (int i = 0; i < c1.gene.length; i++) {
+			if (Math.random() < pc) {
+				c1.gene[i] = p2.gene[i];
+			}
+			if (Math.random() < pc) {
+				c2.gene[i] = p1.gene[i];
+			}
+		}
+		ArrayList<Chromosome> list = new ArrayList<Chromosome>();
+		list.add(c1);
+		list.add(c2);
+		return list;
+	}
+
+	public static ArrayList<Chromosome> genetic(Chromosome p1,Chromosome p2,double pc){
 		if(p1==null&&p2==null){
 			return null;
 		}
