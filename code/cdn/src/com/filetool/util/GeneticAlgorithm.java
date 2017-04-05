@@ -47,7 +47,7 @@ public class GeneticAlgorithm {
             // 计时器
             long endTime=System.currentTimeMillis();
             float excTime=(float)(endTime-startTime)/1000;
-            if (excTime > 70) {
+            if (excTime > 78) {
                 return bestScore;
             }
             evolve();
@@ -59,7 +59,7 @@ public class GeneticAlgorithm {
         }
         return bestScore;
     }
-    
+
     private void init() {
         //******************************************************//
         for(int i=0;i<popSize;i++){
