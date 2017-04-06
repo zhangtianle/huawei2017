@@ -1,6 +1,5 @@
 package com.filetool.util;
 
-import com.cacheserverdeploy.deploy.Deploy;
 import com.cacheserverdeploy.deploy.Deploy.Evaluate;
 
 import java.util.ArrayList;
@@ -69,34 +68,7 @@ public class Chromosome {
 		return list;
 	}
 
-	public static ArrayList<Chromosome> genetic(Chromosome p1,Chromosome p2,double pc){
-		if(p1==null&&p2==null){
-			return null;
-		}
-		if(p1.gene==null || p2.gene==null){
-			return null;
-		}
-		if(p1.gene.length != p2.gene.length){
-			return null;
-		}
-		Chromosome c1 = clone(p1);
-		Chromosome c2 = clone(p2);
-		int cut1 = (int) Math.round(Math.random()*(Deploy.NN-2))+1;
-		int cut2 = (int) Math.round(Math.random()*(Deploy.NN-2))+1;
-		int minCut = cut1 > cut2 ? cut2 : cut1;
-		int maxCut = cut1 > cut2 ? cut1 : cut2;
-		if (Math.random()<pc){
-			for(int i=minCut;i<maxCut;i++){
-				boolean t = c1.gene[i];
-				c1.gene[i] = c2.gene[i];
-				c2.gene[i] = t;
-			}
-		}
-		ArrayList<Chromosome> list = new ArrayList<Chromosome>();
-		list.add(c1);
-		list.add(c2);
-		return list;
-	}
+
 	public static Evaluate getScore(Chromosome p){
 		ArrayList<Integer> sever = new ArrayList<Integer>();
 		for(int i=0;i<p.geneLen;i++){

@@ -12,8 +12,8 @@ public class GeneticAlgorithm {
     private int popSize; // 种群数量
     private int geneSize; // 基因长度编码
     private int maxIter;
-    private double pm = 0.07;
-    private double pc = 0.35;
+    private double pm = 0.01;
+    private double pc = 0.4;
     private int consumptionNum; // 消费节点个数
     private int generation = 1;//当前遗传到第几代
     private Evaluate bestScore; //最好的情况
@@ -47,7 +47,7 @@ public class GeneticAlgorithm {
             // 计时器
             long endTime = System.currentTimeMillis();
             float excTime = (float) (endTime - startTime) / 1000;
-            if (excTime > 78) {
+            if (excTime > 60) {
                 return bestScore;
             }
             evolve();
@@ -64,8 +64,7 @@ public class GeneticAlgorithm {
             if (generation == 90) {
                 intermediate();
             }
-            System.out.println("the times is:" + generation);
-            System.out.println("the cost is:" + bestScore.cost);
+
         }
         return bestScore;
     }
@@ -75,7 +74,7 @@ public class GeneticAlgorithm {
         for (int i = 0; i < popSize; i++) {
             boolean[] bool = new boolean[Deploy.NN];
             ArrayList<Integer> choose1 = new ArrayList<Integer>();
-            if (Math.random() < 0.8) {
+            if (Math.random() < 0.95) {
                 int cc = (int) Math.round(Math.random() * (Deploy.T_list.size() - 2) + 1);  //消费节点随机数
                 while (choose1.size() < cc) {
                     int initNode = (int) Math.round(Math.random() * (Deploy.T_list.size() - 1));
@@ -199,19 +198,19 @@ public class GeneticAlgorithm {
             ArrayList<Integer> choose = new ArrayList<Integer>();
             int cc = (int) Math.round(Math.random() * (Deploy.T_list.size() - 2) + 1);  //消费节点随机数
             while (choose.size() < cc) {
-//                int initNode = (int) Math.round(Math.random() * (Deploy.T_list.size() - 1));
-//
-//                if (choose.indexOf(initNode) == -1) {
-//                    choose.add(initNode);
-//                }
                 int initNode = (int) Math.round(Math.random() * (Deploy.T_list.size() - 1));
-                int node = Deploy.T_list.get(initNode);
 
-                node = Deploy.randwalk(node);
-
-                if (choose.indexOf(node) == -1) {
-                    choose.add(node);
+                if (choose.indexOf(initNode) == -1) {
+                    choose.add(initNode);
                 }
+//                int initNode = (int) Math.round(Math.random() * (Deploy.T_list.size() - 1));
+//                int node = Deploy.T_list.get(initNode);
+//
+//                node = Deploy.randwalk(node);
+//
+//                if (choose.indexOf(node) == -1) {
+//                    choose.add(node);
+//                }
 
             }
             for (int k = 0; k < choose.size(); k++) {

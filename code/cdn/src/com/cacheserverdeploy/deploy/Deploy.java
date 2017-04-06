@@ -2,7 +2,6 @@ package com.cacheserverdeploy.deploy;
 
 import com.filetool.util.Chromosome;
 import com.filetool.util.GeneticAlgorithm;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,7 +32,6 @@ public class Deploy {
         public ArrayList<List> list;
     }
 
-    static float timeLo = 0;
     static int E;  //边的个数
     static int EE;  //添加方向边和反向边的总个数
     public static int NN;
@@ -44,6 +42,7 @@ public class Deploy {
     public static int numServer;
     static int lines; //文件行数
     static int num_T;
+    static int row;
     static List<String> link = new ArrayList<String>();
     public static edge[] e;
     static int en = 0;
@@ -51,6 +50,7 @@ public class Deploy {
     static int[] pre;
     static int[] dist;
     static int[] visited;
+    static int[][] M;
     static int ans; //结果
     static int cost; //花费
     public static ArrayList<Integer> T_list = new ArrayList<Integer>();
@@ -350,12 +350,12 @@ public class Deploy {
             T_list.add(a);
             T_cost.add(b);
         }
+        loadM();
     }
 
     public static Evaluate calC(ArrayList<Integer> server) {
         //*************************************************//
-        float xjbf = xjbf(server);
-        timeLo += xjbf;
+        xjbf(server);
 
         costflow();
 
@@ -371,14 +371,35 @@ public class Deploy {
 
     }
 
-    private static float xjbf(ArrayList<Integer> server) {
-        long startTime = System.currentTimeMillis();
+    private static void xjbf(ArrayList<Integer> server) {
+        numServer = server.size();
+        initEdge();
+        for (int i = 0; i < server.size(); i++)
+            add(server.get(i), T, Integer.MAX_VALUE, 0);
 
-        EE = (lines - num_T) * 4 + num_T * 8 + 10000; //设置边数
-        e = new edge[EE];
-        for (int i = 0; i < EE; i++) {
-            e[i] = new edge();
+    }
+
+    private static void loadM() {
+
+        row = link.size();
+        M = new int[row][4];
+        int i = 0;
+        for (String str : link) {
+            String[] s = str.split("\\s");
+            M[i][0] = Integer.valueOf(s[0]);
+            M[i][1] = Integer.valueOf(s[1]);
+            M[i][2] = Integer.valueOf(s[2]);
+            M[i][3] = Integer.valueOf(s[3]);
+            i++;
         }
+    }
+
+    private static void initEdge() {
+        EE = (lines - num_T) * 4 + num_T * 8 + 10000; //设置边数
+            e = new edge[EE];
+            for (int i = 0; i < EE; i++) {
+                e[i] = new edge();
+            }
         en = 0;
         N = NN + 2;
         head = new int[N];
@@ -390,25 +411,27 @@ public class Deploy {
         ans = 0;
         cost = 0;
         //********************************************//
-        for (String str : link) {
-            String[] s = str.split("\\s");
-            int a = Integer.valueOf(s[0]);
-            int b = Integer.valueOf(s[1]);
-            int c = Integer.valueOf(s[2]);
-            int d = Integer.valueOf(s[3]);
+//        for (String str : link) {
+//            String[] s = str.split("\\s");
+//            int a = Integer.valueOf(s[0]);
+//            int b = Integer.valueOf(s[1]);
+//            int c = Integer.valueOf(s[2]);
+//            int d = Integer.valueOf(s[3]);
+
+
+        for (int i = 0; i < row; i++){
+            int a = M[i][0];
+            int b = M[i][1];
+            int c = M[i][2];
+            int d = M[i][3];
             add(a, b, c, d);
             add(b, a, c, d);
         }
         //添加超级原点,汇点
         S = NN + 0;   //超级原点
         T = NN + 1;  //超级汇点
-        numServer = server.size();
-        for (int i = 0; i < T_list.size(); i++) add(S, T_list.get(i), T_cost.get(i), 0); //添加消费节点到超级汇点
-        for (int i = 0; i < server.size(); i++) add(server.get(i), T, Integer.MAX_VALUE, 0);
 
-        long endTime = System.currentTimeMillis();
-        float excTime = (float) (endTime - startTime);
-        return excTime;
+        for (int i = 0; i < T_list.size(); i++) add(S, T_list.get(i), T_cost.get(i), 0); //添加消费节点到超级汇点
     }
 
     private static String listToString(List list) {
@@ -439,22 +462,23 @@ public class Deploy {
     public static int randwalk(int node){
         if (head == null){
             EE = (lines - num_T)*4 + num_T*8; //设置边数
-            e = new edge[EE];
-            for (int i = 0; i < EE; i++)
-            {
-                e[i] = new edge();
-            }
+                e = new edge[EE];
+                for (int i = 0; i < EE; i++) {
+                    e[i] = new edge();
+                }
             en = 0;
             N = NN + 2;
             head = new int[N];
             for (int i = 0; i < N; i++) head[i] = -1;
             //********************************************//
-            for (String str:link) {
-                String[] s = str.split("\\s");
-                int a = Integer.valueOf(s[0]);
-                int b = Integer.valueOf(s[1]);
-                int c = Integer.valueOf(s[2]);
-                int d = Integer.valueOf(s[3]);
+            if (M == null)
+                loadM();
+
+            for (int i = 0; i < row; i++){
+                int a = M[i][0];
+                int b = M[i][1];
+                int c = M[i][2];
+                int d = M[i][3];
                 add(a, b, c, d);
                 add(b, a, c, d);
             }
@@ -478,7 +502,7 @@ public class Deploy {
                 }
             }
 //            desnode = e[idx].v;
-            if(Math.random()<0.6) {
+            if(Math.random()<0.5) {
                 if(e[idx].v != T) {
                     desnode = e[idx].v;
                 }
@@ -508,7 +532,6 @@ public class Deploy {
         }
         xjbf(server);
         Evaluate evaluate = calC(server);
-
         visitedDFS = new boolean[N];
         while (getPath() != -1) {
         }
@@ -516,7 +539,7 @@ public class Deploy {
 //        System.out.println("woshipathList:   " + pathList);
 
 //
-//        System.out.println(timeLo);
+
 //        Evaluate mcmf = MCMF(S, T, N);
 //        ArrayList<List> resultgraph = mcmf.list;
 //
