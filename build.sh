@@ -6,7 +6,7 @@ APP_HOME=$basepath
 echo building...
 MAKE_FILE=$APP_HOME/makelist.txt
 cd "$APP_HOME/code/cdn/src"
-javac -source 1.6 -target 1.6 -d $APP_HOME/code/cdn/bin -encoding UTF-8 @$MAKE_FILE
+javac -source 1.7 -target 1.7 -d $APP_HOME/code/cdn/bin -encoding UTF-8 @$MAKE_FILE
 
 #打包
 echo make jar...
