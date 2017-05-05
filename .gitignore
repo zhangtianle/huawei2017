@@ -16,7 +16,7 @@
 *.jar
 *.war
 *.ear
-*.zip
+#*.zip
 #*.tar.gz
 *.rar
 
@@ -70,3 +70,5 @@ fabric.properties
 .idea/
 bin/
 code/cdn/bin/
+
+cdn\.tar\.gz
